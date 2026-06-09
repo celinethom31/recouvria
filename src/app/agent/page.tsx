@@ -1,6 +1,6 @@
 'use client'
 // src/app/agent/page.tsx
-export const dynamic = 'force-dynamic'
+import { Suspense } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -63,7 +63,7 @@ function AgentPageContent() {
       const data = await res.json()
       setMessages(m => [...m, { role: 'assistant', content: data.reply || 'Désolé, une erreur est survenue.' }])
     } catch {
-      setMessages(m => [...m, { role: 'assistant', content: 'Erreur de connexion à l\'agent IA.' }])
+      setMessages(m => [...m, { role: 'assistant', content: "Erreur de connexion à l'agent IA." }])
     }
     setLoading(false)
   }
@@ -82,7 +82,7 @@ function AgentPageContent() {
       const reply = `**Score de risque : ${data.scoreRisque}/100**\n\n**Analyse :**\n${data.analyse}\n\n**Recommandation :**\n${data.recommandation}`
       setMessages(m => [...m, { role: 'assistant', content: reply }])
     } catch {
-      setMessages(m => [...m, { role: 'assistant', content: 'Erreur lors de l\'analyse.' }])
+      setMessages(m => [...m, { role: 'assistant', content: "Erreur lors de l'analyse." }])
     }
     setLoading(false)
   }
@@ -107,10 +107,8 @@ function AgentPageContent() {
       </div>
 
       <div className="page-content" style={{ display: 'flex', gap: 20, height: 'calc(100vh - 56px)', paddingBottom: 0, overflow: 'hidden' }}>
-        {/* Chat */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            {/* Messages */}
             <div className="chat-messages" style={{ flex: 1, paddingRight: 4 }}>
               {messages.map((m, i) => (
                 <div key={i} className={`chat-bubble ${m.role}`} style={{ whiteSpace: 'pre-wrap' }}>
@@ -133,7 +131,6 @@ function AgentPageContent() {
               )}
               <div ref={messagesEndRef} />
             </div>
-            {/* Input */}
             <div className="chat-input-row">
               <input
                 className="form-input"
@@ -151,7 +148,6 @@ function AgentPageContent() {
           </div>
         </div>
 
-        {/* Actions rapides */}
         <div style={{ width: 260, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 24, overflowY: 'auto' }}>
           <div className="card card-sm">
             <div style={{ fontSize: 11.5, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Actions rapides</div>
@@ -174,7 +170,7 @@ function AgentPageContent() {
           <div className="card card-sm">
             <div style={{ fontSize: 11.5, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Conseils</div>
             <div style={{ fontSize: 12.5, color: '#888', lineHeight: 1.5 }}>
-              L'agent connaît le contexte de vos dossiers. Vous pouvez lui demander de rédiger un courrier spécifique en précisant la référence, le ton et l'étape de relance souhaitée.
+              {"L'agent connaît le contexte de vos dossiers. Vous pouvez lui demander de rédiger un courrier spécifique en précisant la référence, le ton et l'étape de relance souhaitée."}
             </div>
           </div>
         </div>
@@ -189,7 +185,11 @@ function AgentPageContent() {
     </>
   )
 }
-import { Suspense } from 'react'
+
 export default function AgentPage() {
-  return <Suspense fallback={<div style={{padding:24}}>Chargement...</div>}><AgentPageContent /></Suspense>
+  return (
+    <Suspense fallback={<div style={{ padding: 24, color: '#888' }}>Chargement...</div>}>
+      <AgentPageContent />
+    </Suspense>
+  )
 }
