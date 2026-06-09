@@ -1,0 +1,164 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Dossier {
+  id              String    @id @default(cuid())
+  reference       String    @unique
+  debiteurNom     String
+  debiteurEmail   String?
+  debiteurTel     String?
+  debiteurAdresse String?
+  debiteurType    DebiteurType @default(PARTICULIER)
+  montantInitial  Float
+  montantRestant  Float
+  dateEcheance    DateTime
+  dateCreation    DateTime  @default(now())
+  dateMaj         DateTime  @updatedAt
+  statut          StatutDossier @default(EN_COURS)
+  priorite        Priorite  @default(NORMALE)
+  notes           String?
+  tags            String[]  @default([])
+
+  scenarioId      String?
+  scenario        Scenario? @relation(fields: [scenarioId], references: [id])
+
+  actions         Action[]
+  envois          Envoi[]
+  analyses        AnalyseIA[]
+
+  @@index([statut])
+  @@index([dateEcheance])
+}
+
+model Scenario {
+  id          String   @id @default(cuid())
+  nom         String
+  description String?
+  actif       Boolean  @default(true)
+  dateCreation DateTime @default(now())
+
+  etapes      EtapeScenario[]
+  dossiers    Dossier[]
+}
+
+model EtapeScenario {
+  id          String   @id @default(cuid())
+  scenarioId  String
+  scenario    Scenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  ordre       Int
+  jourDeclenchement Int
+  canal       Canal
+  sujet       String?
+  contenu     String
+  actif       Boolean  @default(true)
+  genererAvecIA Boolean @default(false)
+}
+
+model Action {
+  id          String   @id @default(cuid())
+  dossierId   String
+  dossier     Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type        TypeAction
+  description String
+  date        DateTime @default(now())
+  auteur      String   @default("Système")
+  metadata    Json?
+}
+
+model Envoi {
+  id          String   @id @default(cuid())
+  dossierId   String
+  dossier     Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  canal       Canal
+  destinataire String
+  sujet       String?
+  contenu     String
+  statut      StatutEnvoi @default(EN_ATTENTE)
+  dateEnvoi   DateTime?
+  dateCreation DateTime @default(now())
+  messageId   String?
+  erreur      String?
+  metadata    Json?
+}
+
+model AnalyseIA {
+  id          String   @id @default(cuid())
+  dossierId   String
+  dossier     Dossier  @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  type        TypeAnalyse
+  resultat    String
+  recommandation String?
+  scoreRisque Int?
+  date        DateTime @default(now())
+}
+
+model Parametre {
+  id    String @id @default(cuid())
+  cle   String @unique
+  valeur String
+  description String?
+}
+
+enum DebiteurType {
+  PARTICULIER
+  ENTREPRISE
+}
+
+enum StatutDossier {
+  EN_COURS
+  PROMESSE_PAIEMENT
+  PAYE
+  LITIGIEUX
+  CLASSE_SANS_SUITE
+  TRANSMIS_CONTENTIEUX
+}
+
+enum Priorite {
+  BASSE
+  NORMALE
+  HAUTE
+  URGENTE
+}
+
+enum Canal {
+  EMAIL
+  SMS
+  COURRIER
+}
+
+enum StatutEnvoi {
+  EN_ATTENTE
+  ENVOYE
+  DELIVRE
+  OUVERT
+  ERREUR
+  REFUSE
+}
+
+enum TypeAction {
+  CREATION
+  IMPORT
+  EMAIL_ENVOYE
+  SMS_ENVOYE
+  RELANCE_MANUELLE
+  PROMESSE_RECUE
+  PAIEMENT_RECU
+  ANALYSE_IA
+  CHANGEMENT_STATUT
+  NOTE_AJOUTEE
+  TRANSMIS_CONTENTIEUX
+}
+
+enum TypeAnalyse {
+  RISQUE
+  REDACTION_COURRIER
+  RECOMMANDATION_ACTION
+  RAPPORT
+}
