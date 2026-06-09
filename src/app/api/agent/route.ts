@@ -1,4 +1,5 @@
 // src/app/api/agent/route.ts
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { chatAgent, analyserDossier } from '@/lib/agent'
 import { prisma } from '@/lib/prisma'
