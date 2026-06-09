@@ -173,7 +173,7 @@ export default function ParametresPage() {
         <div className="card mb-4">
           <h3 style={{ marginBottom: 12 }}>Automatisation (cron)</h3>
           <div style={{ fontSize: 13.5, color: '#555', lineHeight: 1.6, marginBottom: 12 }}>
-            Le moteur de scénarios est déclenché via l'URL suivante. Configurer dans votre hébergement (cPanel > Tâches cron, Vercel Cron, etc.) pour une exécution quotidienne à 8h.
+            Le moteur de scénarios est déclenché via l'URL suivante. Configurer dans votre hébergement (cPanel &gt; Tâches cron, Vercel Cron, etc.) pour une exécution quotidienne à 8h.
           </div>
           <div style={{ background: '#f5f5f3', borderRadius: 8, padding: 12, fontFamily: 'monospace', fontSize: 12.5, wordBreak: 'break-all' }}>
             GET https://votre-domaine.com/api/cron?secret=<strong>VOTRE_CRON_SECRET</strong>
