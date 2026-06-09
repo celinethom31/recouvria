@@ -16,7 +16,7 @@ const QUICK_ACTIONS = [
   { icon: '❓', label: 'Règlementation R124-4', prompt: 'Rappelle-moi les règles essentielles de la réglementation R124-4 CPCE concernant le recouvrement amiable en France.' },
 ]
 
-export default function AgentPage() {
+function AgentPageContent() {
   const searchParams = useSearchParams()
   const dossierId = searchParams.get('dossier')
   const [messages, setMessages] = useState<Message[]>([
@@ -188,4 +188,8 @@ export default function AgentPage() {
       `}</style>
     </>
   )
+}
+import { Suspense } from 'react'
+export default function AgentPage() {
+  return <Suspense fallback={<div style={{padding:24}}>Chargement...</div>}><AgentPageContent /></Suspense>
 }
