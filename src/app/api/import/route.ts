@@ -2,8 +2,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { importFromExcel, previewExcel } from '@/lib/importExcel'
 
-export const config = { api: { bodyParser: false } }
-
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
   const file = formData.get('file') as File | null
